@@ -495,21 +495,7 @@
         log('System initialized. Please select an operating mode.');
         updateStatus('idle');
         
-        // Simulate connection check
-        setInterval(() => {
-            const isConnected = Math.random() > 0.01; // 1% chance of connection drop for demo
-            connectionStatus.className = isConnected ? 'indicator green' : 'indicator red';
-            connectionText.textContent = isConnected ? 'Connected' : 'Disconnected';
-            
-            if (!isConnected) {
-                log('Warning: Connection lost. Trying to reconnect...');
-                setTimeout(() => {
-                    connectionStatus.className = 'indicator green';
-                    connectionText.textContent = 'Connected';
-                    log('Connection restored.');
-                }, 2000);
-            }
-        }, 10000);
+   
     </script>
 </body>
 </html>
