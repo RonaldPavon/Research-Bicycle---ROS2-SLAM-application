@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BobbiV2 - File Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .navigation {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .nav-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .nav-button:hover {
+            background-color: #0056b3;
+        }
+        .nav-button.current {
+            background-color: #28a745;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .toolbar-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .action-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .action-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .refresh-button {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .refresh-button:hover:not(:disabled) {
+            background-color: #138496;
+        }
+        .download-button {
+            background-color: #28a745;
+            color: white;
+        }
+        .download-button:hover:not(:disabled) {
+            background-color: #218838;
+        }
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-button:hover:not(:disabled) {
+            background-color: #c82333;
+        }
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .file-table th,
+        .file-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .file-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        .file-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .file-row.selected {
+            background-color: #e3f2fd;
+        }
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .folder-icon {
+            color: #ffa726;
+        }
+        .file-icon-default {
+            color: #90a4ae;
+        }
+        .mcap-icon {
+            color: #4caf50;
+        }
+        .file-name {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .file-name:hover {
+            color: #007bff;
+        }
+        .file-size {
+            text-align: right;
+            font-family: monospace;
+        }
+        .file-date {
+            font-family: monospace;
+            color: #666;
+        }
+        .checkbox-cell {
+            width: 40px;
+            text-align: center;
+        }
+        .select-all-checkbox {
+            cursor: pointer;
+        }
+        .file-checkbox {
+            cursor: pointer;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #999;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            margin: 0;
+            color: #333;
+        }
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-button:hover {
+            color: #333;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .modal-button.primary {
+            background-color: #dc3545;
+            color: white;
+        }
+        .modal-button.secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .file-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        .directory-indicator {
+            padding-left: 20px;
+        }
+        .directory-indicator.level-1 { padding-left: 40px; }
+        .directory-indicator.level-2 { padding-left: 60px; }
+        .directory-indicator.level-3 { padding-left: 80px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BobbiV2 File Manager</h1>
+        
+        <div class="navigation">
+            <a href="/" class="nav-button">Control Panel</a>
+            <a href="/files" class="nav-button current">File Manager</a>
+        </div>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <span>📁 /mnt/mcap</span>
+        </div>
+
+        <div class="file-stats" id="file-stats">
+            <span id="total-files">Loading...</span>
+            <span id="total-size">Loading...</span>
+            <span id="selected-count">0 selected</span>
+        </div>
+
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="action-button refresh-button" id="refresh-button">
+                    🔄 Refresh
+                </button>
+            </div>
+            <div class="toolbar-right">
+                <button class="action-button download-button" id="download-button" disabled>
+                    ⬇️ Download Selected
+                </button>
+                <button class="action-button delete-button" id="delete-button" disabled>
+                    🗑️ Delete Selected
+                </button>
+            </div>
+        </div>
+
+        <div class="status-message" id="status-message"></div>
+
+        <div class="loading" id="loading" style="display: none;">
+            <p>Loading files...</p>
+        </div>
+
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <h3>No files found</h3>
+            <p>The data directory is empty. Start recording to create some files!</p>
+        </div>
+
+        <div id="file-table-container">
+            <table class="file-table" id="file-table">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell">
+                            <input type="checkbox" class="select-all-checkbox" id="select-all">
+                        </th>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>Modified</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody id="file-table-body">
+                    <!-- Files will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="close-button" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the selected files? This action cannot be undone.</p>
+                <div id="files-to-delete"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button secondary" id="cancel-delete">Cancel</button>
+                <button class="modal-button primary" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let allFiles = [];
+        let selectedFiles = new Set();
+        let currentPath = '';
+
+        // DOM elements
+        const loadingDiv = document.getElementById('loading');
+        const emptyStateDiv = document.getElementById('empty-state');
+        const fileTableContainer = document.getElementById('file-table-container');
+        const fileTableBody = document.getElementById('file-table-body');
+        const refreshButton = document.getElementById('refresh-button');
+        const downloadButton = document.getElementById('download-button');
+        const deleteButton = document.getElementById('delete-button');
+        const selectAllCheckbox = document.getElementById('select-all');
+        const statusMessage = document.getElementById('status-message');
+        const fileStats = document.getElementById('file-stats');
+        const totalFilesSpan = document.getElementById('total-files');
+        const totalSizeSpan = document.getElementById('total-size');
+        const selectedCountSpan = document.getElementById('selected-count');
+        const deleteModal = document.getElementById('delete-modal');
+        const filesToDeleteDiv = document.getElementById('files-to-delete');
+
+        // Utility functions
+        function getFileIcon(fileName, isDirectory) {
+            if (isDirectory) {
+                return '<span class="file-icon folder-icon">📁</span>';
+            }
+            
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'mcap':
+                    return '<span class="file-icon mcap-icon">📊</span>';
+                case 'bag':
+                    return '<span class="file-icon mcap-icon">📦</span>';
+                case 'yaml':
+                case 'yml':
+                    return '<span class="file-icon">📄</span>';
+                case 'txt':
+                case 'log':
+                    return '<span class="file-icon">📝</span>';
+                default:
+                    return '<span class="file-icon file-icon-default">📄</span>';
+            }
+        }
+
+        function formatDate(timestamp) {
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        function getFileType(fileName, isDirectory) {
+            if (isDirectory) return 'Directory';
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'mcap': return 'MCAP Recording';
+                case 'bag': return 'ROS Bag';
+                case 'yaml':
+                case 'yml': return 'YAML Config';
+                case 'txt': return 'Text File';
+                case 'log': return 'Log File';
+                default: return 'File';
+            }
+        }
+
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function updateFileStats() {
+            const totalFiles = allFiles.length;
+            const totalSize = allFiles.reduce((sum, file) => sum + (file.size || 0), 0);
+            const selectedCount = selectedFiles.size;
+
+            totalFilesSpan.textContent = `${totalFiles} items`;
+            totalSizeSpan.textContent = `Total: ${formatFileSize(totalSize)}`;
+            selectedCountSpan.textContent = `${selectedCount} selected`;
+
+            // Update button states
+            downloadButton.disabled = selectedCount === 0;
+            deleteButton.disabled = selectedCount === 0;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // File operations
+        async function loadFiles() {
+            loadingDiv.style.display = 'block';
+            fileTableContainer.style.display = 'none';
+            emptyStateDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/files');
+                const data = await response.json();
+                
+                if (data.success) {
+                    allFiles = flattenFileStructure(data.files);
+                    renderFileTable();
+                    updateFileStats();
+                    
+                    if (allFiles.length === 0) {
+                        emptyStateDiv.style.display = 'block';
+                    } else {
+                        fileTableContainer.style.display = 'block';
+                    }
+                } else {
+                    showStatus(`Error loading files: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Network error: ${error.message}`, 'error');
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function flattenFileStructure(files, path = '', level = 0) {
+            let flattened = [];
+            
+            for (const file of files) {
+                const filePath = path ? `${path}/${file.name}` : file.name;
+                const fileItem = {
+                    ...file,
+                    path: filePath,
+                    level: level
+                };
+                
+                flattened.push(fileItem);
+                
+                // If it's a directory with children, flatten those too
+                if (file.is_directory && file.children) {
+                    flattened = flattened.concat(
+                        flattenFileStructure(file.children, filePath, level + 1)
+                    );
+                }
+            }
+            
+            return flattened;
+        }
+
+        function renderFileTable() {
+            fileTableBody.innerHTML = '';
+            selectedFiles.clear();
+            selectAllCheckbox.checked = false;
+
+            allFiles.forEach((file, index) => {
+                const row = document.createElement('tr');
+                row.className = 'file-row';
+                row.dataset.index = index;
+                row.dataset.path = file.path;
+
+                const levelClass = file.level > 0 ? `directory-indicator level-${Math.min(file.level, 3)}` : '';
+
+                row.innerHTML = `
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="file-checkbox" data-path="${file.path}">
+                    </td>
+                    <td class="file-name ${levelClass}" data-path="${file.path}">
+                        ${getFileIcon(file.name, file.is_directory)}
+                        ${file.name}
+                    </td>
+                    <td class="file-size">${file.size_formatted}</td>
+                    <td class="file-date">${formatDate(file.modified)}</td>
+                    <td>${getFileType(file.name, file.is_directory)}</td>
+                `;
+
+                fileTableBody.appendChild(row);
+            });
+
+            // Add event listeners for checkboxes
+            document.querySelectorAll('.file-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleFileSelection);
+            });
+        }
+
+        function handleFileSelection(event) {
+            const path = event.target.dataset.path;
+            const row = event.target.closest('tr');
+
+            if (event.target.checked) {
+                selectedFiles.add(path);
+                row.classList.add('selected');
+            } else {
+                selectedFiles.delete(path);
+                row.classList.remove('selected');
+            }
+
+            updateFileStats();
+            updateSelectAllCheckbox();
+        }
+
+        function updateSelectAllCheckbox() {
+            const totalCheckboxes = document.querySelectorAll('.file-checkbox').length;
+            const checkedCheckboxes = selectedFiles.size;
+
+            if (checkedCheckboxes === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCheckboxes === totalCheckboxes) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        }
+
+        async function downloadSelectedFiles() {
+            if (selectedFiles.size === 0) return;
+
+            const selectedArray = Array.from(selectedFiles);
+            
+            if (selectedArray.length === 1) {
+                // Single file download
+                const filePath = selectedArray[0];
+                window.open(`/api/files/download/${encodeURIComponent(filePath)}`, '_blank');
+            } else {
+                // Multiple files - download individually
+                selectedArray.forEach(filePath => {
+                    setTimeout(() => {
+                        window.open(`/api/files/download/${encodeURIComponent(filePath)}`, '_blank');
+                    }, 100);
+                });
+            }
+
+            showStatus(`Downloading ${selectedArray.length} file(s)...`, 'success');
+        }
+
+        function showDeleteModal() {
+            if (selectedFiles.size === 0) return;
+
+            const selectedArray = Array.from(selectedFiles);
+            filesToDeleteDiv.innerHTML = `
+                <ul>
+                    ${selectedArray.map(path => `<li>${path}</li>`).join('')}
+                </ul>
+            `;
+
+            deleteModal.style.display = 'block';
+        }
+
+        function hideDeleteModal() {
+            deleteModal.style.display = 'none';
+        }
+
+        async function deleteSelectedFiles() {
+            if (selectedFiles.size === 0) return;
+
+            const selectedArray = Array.from(selectedFiles);
+            
+            try {
+                const response = await fetch('/api/files/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: selectedArray
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`Deleted ${data.deleted.length} file(s)`, 'success');
+                    
+                    if (data.errors.length > 0) {
+                        showStatus(`Some files could not be deleted: ${data.errors.join(', ')}`, 'error');
+                    }
+
+                    // Reload the file list
+                    await loadFiles();
+                } else {
+                    showStatus(`Error deleting files: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Network error: ${error.message}`, 'error');
+            }
+
+            hideDeleteModal();
+        }
+
+        // Event listeners
+        refreshButton.addEventListener('click', loadFiles);
+        downloadButton.addEventListener('click', downloadSelectedFiles);
+        deleteButton.addEventListener('click', showDeleteModal);
+
+        selectAllCheckbox.addEventListener('change', (event) => {
+            const checkboxes = document.querySelectorAll('.file-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = event.target.checked;
+                handleFileSelection({ target: checkbox });
+            });
+        });
+
+        // Modal event listeners
+        document.getElementById('close-modal').addEventListener('click', hideDeleteModal);
+        document.getElementById('cancel-delete').addEventListener('click', hideDeleteModal);
+        document.getElementById('confirm-delete').addEventListener('click', deleteSelectedFiles);
+
+        // Close modal when clicking outside
+        deleteModal.addEventListener('click', (event) => {
+            if (event.target === deleteModal) {
+                hideDeleteModal();
+            }
+        });
+
+        // Initialize
+        loadFiles();
+    </script>
+</body>
+</html>

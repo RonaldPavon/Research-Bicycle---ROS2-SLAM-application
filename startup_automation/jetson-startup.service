@@ -1,0 +1,16 @@
+[Unit]
+Description=Jetson Startup Sequence
+After=NetworkManager.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/jetson-startup.sh
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

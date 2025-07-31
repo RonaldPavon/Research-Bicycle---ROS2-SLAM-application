@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BobbiV2 Control Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .status-panel {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .mode-button {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .mode-button:hover {
+            background-color: #d0d0d0;
+        }
+        .mode-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .red {
+            background-color: #f44336;
+        }
+        .yellow {
+            background-color: #ffeb3b;
+        }
+        .green {
+            background-color: #4CAF50;
+        }
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .control-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .control-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .launch-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .launch-button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+        .record-button {
+            background-color: #f44336;
+            color: white;
+        }
+        .record-button:hover:not(:disabled) {
+            background-color: #d32f2f;
+        }
+        .record-button.recording {
+            background-color: #9E9E9E;
+        }
+        .record-button.recording:hover {
+            background-color: #757575;
+        }
+        .stop-button {
+            background-color: #FF9800;
+            color: white;
+            grid-column: 1 / -1;
+        }
+        .stop-button:hover:not(:disabled) {
+            background-color: #f57c00;
+        }
+        .standby-message {
+            text-align: center;
+            padding: 15px;
+            background-color: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        .standby-message.active {
+            display: block;
+        }
+        .log-panel {
+            height: 150px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BobbiV2 Control Interface</h1>
+        
+        <div class="status-panel">
+            <h3>System Status</h3>
+            <div class="status-indicator">
+                <span>Connection:</span>
+                <div>
+                    <span class="indicator green" id="connection-status"></span>
+                    <span id="connection-text">Connected</span>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <span>Docker Container:</span>
+                <div>
+                    <span class="indicator red" id="docker-status"></span>
+                    <span id="docker-text">Not Running</span>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <span>ROS2 Nodes:</span>
+                <div>
+                    <span class="indicator red" id="ros-status"></span>
+                    <span id="ros-text">Not Running</span>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <span>Recording:</span>
+                <div>
+                    <span class="indicator red" id="recording-status"></span>
+                    <span id="recording-text">Not Recording</span>
+                </div>
+            </div>
+        </div>
+        
+        <h3>Select Operating Mode</h3>
+        <div class="mode-selector">
+            <button class="mode-button" data-mode="mode1">Front Sensors</button>
+            <button class="mode-button" data-mode="mode2">Rear Sensors</button>
+            <button class="mode-button" data-mode="mode3">All Cameras</button>
+            <button class="mode-button" data-mode="mode4">All Lidars</button>
+            <button class="mode-button" data-mode="mode5">Max Perception</button>
+        </div>
+        
+        <div class="control-panel">
+            <button id="launch-button" class="control-button launch-button">Launch Selected Mode</button>
+            <button id="record-button" class="control-button record-button" disabled>Start Recording</button>
+            <button id="stop-button" class="control-button stop-button">Stop System</button>
+        </div>
+        
+        <div id="standby-message" class="standby-message">
+            System is ready! Click "Start Recording" to begin data collection.
+        </div>
+        
+        <div class="log-panel" id="log-panel">
+            <!-- Log messages will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const modeButtons = document.querySelectorAll('.mode-button');
+        const launchButton = document.getElementById('launch-button');
+        const recordButton = document.getElementById('record-button');
+        const stopButton = document.getElementById('stop-button');
+        const standbyMessage = document.getElementById('standby-message');
+        const logPanel = document.getElementById('log-panel');
+        
+        // Status indicators
+        const dockerStatus = document.getElementById('docker-status');
+        const dockerText = document.getElementById('docker-text');
+        const rosStatus = document.getElementById('ros-status');
+        const rosText = document.getElementById('ros-text');
+        const recordingStatus = document.getElementById('recording-status');
+        const recordingText = document.getElementById('recording-text');
+        const connectionStatus = document.getElementById('connection-status');
+        const connectionText = document.getElementById('connection-text');
+        
+        // Global state
+        let selectedMode = null;
+        let systemState = 'idle'; // idle, launching, ready, recording, stopping
+        
+        // Helper Functions
+        function log(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logPanel.appendChild(logEntry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+        
+        function updateButtonStates() {
+            switch (systemState) {
+                case 'idle':
+                    launchButton.disabled = !selectedMode;
+                    recordButton.disabled = true;
+                    recordButton.textContent = 'Start Recording';
+                    recordButton.classList.remove('recording');
+                    stopButton.disabled = false;
+                    break;
+                    
+                case 'launching':
+                    launchButton.disabled = true;
+                    recordButton.disabled = true;
+                    recordButton.textContent = 'Start Recording';
+                    recordButton.classList.remove('recording');
+                    stopButton.disabled = false;
+                    break;
+                    
+                case 'ready':
+                    launchButton.disabled = true;
+                    recordButton.disabled = false;
+                    recordButton.textContent = 'Start Recording';
+                    recordButton.classList.remove('recording');
+                    stopButton.disabled = false;
+                    break;
+                    
+                case 'recording':
+                    launchButton.disabled = true;
+                    recordButton.disabled = false;
+                    recordButton.textContent = 'Stop Recording';
+                    recordButton.classList.add('recording');
+                    stopButton.disabled = false;
+                    break;
+                    
+                case 'stopping':
+                    launchButton.disabled = true;
+                    recordButton.disabled = true;
+                    recordButton.textContent = 'Start Recording';
+                    recordButton.classList.remove('recording');
+                    stopButton.disabled = true;
+                    break;
+            }
+        }
+        
+        function updateStatus(state) {
+            systemState = state;
+            updateButtonStates();
+            
+            switch (state) {
+                case 'idle':
+                    dockerStatus.className = 'indicator red';
+                    dockerText.textContent = 'Not Running';
+                    rosStatus.className = 'indicator red';
+                    rosText.textContent = 'Not Running';
+                    recordingStatus.className = 'indicator red';
+                    recordingText.textContent = 'Not Recording';
+                    standbyMessage.classList.remove('active');
+                    break;
+                    
+                case 'launching':
+                    dockerStatus.className = 'indicator yellow';
+                    dockerText.textContent = 'Starting...';
+                    rosStatus.className = 'indicator yellow';
+                    rosText.textContent = 'Starting...';
+                    standbyMessage.classList.remove('active');
+                    log(`Launching container for ${selectedMode}...`);
+                    
+                    fetch('/api/launch', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ mode: selectedMode })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            log(`Container for mode ${data.mode} launched successfully.`);
+                            
+                            dockerStatus.className = 'indicator green';
+                            dockerText.textContent = 'Running';
+
+                            setTimeout(() => {
+                                rosStatus.className = 'indicator green';
+                                rosText.textContent = 'Active';
+                                log('ROS nodes are now running.');
+                                updateStatus('ready');
+                            }, 2000);
+                        } else {
+                            log(`Failed to launch mode: ${data.error}`);
+                            dockerStatus.className = 'indicator red';
+                            dockerText.textContent = 'Error';
+                            updateStatus('idle');
+                        }
+                    })
+                    .catch(err => {
+                        log(`Request failed: ${err}`);
+                        dockerStatus.className = 'indicator red';
+                        dockerText.textContent = 'Network Error';
+                        updateStatus('idle');
+                    });
+                    break;
+                    
+                case 'ready':
+                    standbyMessage.classList.add('active');
+                    log('System is ready for recording.');
+                    break;
+                    
+                case 'recording':
+                    recordingStatus.className = 'indicator green';
+                    recordingText.textContent = 'Recording';
+                    standbyMessage.classList.remove('active');
+                    log('Recording started.');
+                    break;
+                    
+                case 'stopping':
+                    recordingStatus.className = 'indicator red';
+                    recordingText.textContent = 'Not Recording';
+                    standbyMessage.classList.remove('active');
+                    log('Stopping recording and container...');
+                    
+                    // API call to stop the system
+                    fetch('/api/stop', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            log('Recording and container stopped successfully.');
+                            dockerStatus.className = 'indicator red';
+                            dockerText.textContent = 'Not Running';
+                            rosStatus.className = 'indicator red';
+                            rosText.textContent = 'Not Running';
+                            
+                            setTimeout(() => {
+                                updateStatus('idle');
+                            }, 500);
+                        } else {
+                            log(`Failed to stop system: ${data.error || 'Unknown error'}`);
+                            setTimeout(() => {
+                                updateStatus('idle');
+                            }, 500);
+                        }
+                    })
+                    .catch(err => {
+                        log(`Stop request failed: ${err}`);
+                        dockerStatus.className = 'indicator red';
+                        dockerText.textContent = 'Network Error';
+                        setTimeout(() => {
+                            updateStatus('idle');
+                        }, 500);
+                    });
+                    break;
+            }
+        }
+        
+        function startRecording() {
+            log('Starting recording...');
+            
+            // API call to start recording
+            fetch('/api/start-recording', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateStatus('recording');
+                    log('Recording started successfully.');
+                } else {
+                    log(`Failed to start recording: ${data.error || 'Unknown error'}`);
+                }
+            })
+            .catch(err => {
+                log(`Start recording request failed: ${err}`);
+            });
+        }
+        
+        function stopRecording() {
+            log('Stopping recording...');
+            
+            // API call to stop recording
+            fetch('/api/stop-recording', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateStatus('ready');
+                    log('Recording stopped successfully.');
+                } else {
+                    log(`Failed to stop recording: ${data.error || 'Unknown error'}`);
+                }
+            })
+            .catch(err => {
+                log(`Stop recording request failed: ${err}`);
+            });
+        }
+        
+        // Event Listeners
+        modeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Only allow mode selection if system is idle
+                if (systemState !== 'idle') {
+                    log('Cannot change mode while system is active.');
+                    return;
+                }
+                
+                modeButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                selectedMode = this.getAttribute('data-mode');
+                log(`Selected mode: ${this.textContent}`);
+                updateButtonStates();
+            });
+        });
+        
+        launchButton.addEventListener('click', function() {
+            if (!selectedMode) {
+                log('Please select an operating mode first.');
+                return;
+            }
+            
+            if (systemState !== 'idle') {
+                log('System is already running. Stop it first.');
+                return;
+            }
+            
+            updateStatus('launching');
+        });
+        
+        recordButton.addEventListener('click', function() {
+            if (systemState === 'ready') {
+                startRecording();
+            } else if (systemState === 'recording') {
+                stopRecording();
+            }
+        });
+        
+        stopButton.addEventListener('click', function() {
+            if (systemState === 'idle') {
+                log('System is already stopped.');
+                return;
+            }
+            
+            log('Stopping all systems...');
+            updateStatus('stopping');
+        });
+        
+        // Initialize
+        log('System initialized. Please select an operating mode.');
+        updateStatus('idle');
+        
+        // Simulate connection check
+        setInterval(() => {
+            const isConnected = Math.random() > 0.01; // 1% chance of connection drop for demo
+            connectionStatus.className = isConnected ? 'indicator green' : 'indicator red';
+            connectionText.textContent = isConnected ? 'Connected' : 'Disconnected';
+            
+            if (!isConnected) {
+                log('Warning: Connection lost. Trying to reconnect...');
+                setTimeout(() => {
+                    connectionStatus.className = 'indicator green';
+                    connectionText.textContent = 'Connected';
+                    log('Connection restored.');
+                }, 2000);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

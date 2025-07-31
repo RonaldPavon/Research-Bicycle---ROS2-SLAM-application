@@ -1,0 +1,11 @@
+[Unit]
+Description=Start WiFi Hotspot
+After=NetworkManager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/start-hotspot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
