@@ -190,17 +190,4 @@ log_message "  - NTP: desactivado"
 log_message "  - Hotspot: $HOTSPOT_CONNECTION activo"
 log_message "  - PTP: ptp4l (PID: $PTP4L_PID) y phc2sys (PID: $PHC2SYS_PID)"
 
-# Mantener el script corriendo para monitorear PTP
-while true; do
-    if ! kill -0 $PTP4L_PID 2>/dev/null; then
-        log_message "ERROR: ptp4l se detuvo inesperadamente"
-        exit 1
-    fi
-    
-    if ! kill -0 $PHC2SYS_PID 2>/dev/null; then
-        log_message "ERROR: phc2sys se detuvo inesperadamente"
-        exit 1
-    fi
-    
-    sleep 30
 done
