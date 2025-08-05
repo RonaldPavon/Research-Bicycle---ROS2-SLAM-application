@@ -22,7 +22,7 @@ def generate_launch_description():
     ld.add_action(DeclareLaunchArgument('use_rear_camera', default_value='false', description='Launch rear camera'))
     ld.add_action(DeclareLaunchArgument('use_front_lidar', default_value='false', description='Launch front lidar'))
     ld.add_action(DeclareLaunchArgument('use_rear_lidar', default_value='false', description='Launch rear lidar'))
-    ld.add_action(DeclareLaunchArgument('enable_gnss', default_value='false', description='Launch gnss'))
+    ld.add_action(DeclareLaunchArgument('enable_gnss', default_value='true', description='Launch gnss'))
 
     # Paths to sensor launch files
     camera_launch_path = os.path.join(

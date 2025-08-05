@@ -61,7 +61,7 @@ def launch_container(mode):
         }
         
         mode_topics = {
-            "mode1": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
+            "mode1": ["fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
             "mode2": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
             "mode3": ["/zed_multi/front_camera/imu"],    #Add rear camera 
             "mode4": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"], #Add front lidar
