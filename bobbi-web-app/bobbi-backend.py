@@ -177,7 +177,7 @@ def start_recording():
         file_date = dt.strftime("%d_%m_%Y")
         
         mode_topics = {
-            "mode1": ["/livox/imu_3WEDJ9H00100551", "/livox/lidar_3WEDJ9H00100551"],
+            "mode1": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
             "mode2": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
             "mode3": ["/zed_multi/front_camera/imu", "/zed_multi/front_camera/rgb/image_rect_color/compressed"],
         }
