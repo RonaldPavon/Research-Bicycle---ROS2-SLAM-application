@@ -174,7 +174,7 @@ def start_recording():
 
         dt = datetime.fromtimestamp(timestamp)
 
-        file_date = dt.strftime("%d_%m_%Y")
+        file_date = file_date = dt.strftime("%d_%m_%Y_%H_%M")
         
         mode_topics = {
             "mode1": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
