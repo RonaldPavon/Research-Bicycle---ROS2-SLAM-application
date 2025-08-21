@@ -6,7 +6,8 @@ All recorded data is stored in ROS2 bag in `.db3` format and can be downloaded d
 
 ---
 
-![BobbiV2 Research Bicycle](assets/bobbi.jpg "BobbiV2 Research Bicycle")
+<img src="assets/bobbi.jpg" alt="BobbiV2 Research Bicycle" title="BobbiV2 Research Bicycle" width="600">
+
 
 ## 📦 System Components
 
