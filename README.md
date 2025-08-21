@@ -19,6 +19,8 @@ All recorded data is stored in ROS2 bag in `.db3` format and can be downloaded d
   - [Livox Horizon LiDAR](https://www.livoxtech.com/3296f540ecf5458a8829e01cf429798e/assets/horizon/Livox%20Horizon%20user%20manual%20v1.0.pdf) – High-resolution LiDAR for front/rear perception.
   - [ZED X Camera](https://www.stereolabs.com/zed-x/) – Wide FOV stereo camera for visual data.
   - [u-blox GNSS](https://www.u-blox.com/en/product/zed-f9p-module) – High-precision GPS module for localization.
+ 
+- Additionally all CAD fixtures for the hardware can be found ready to 3D print: [here](gcode/)
 ---
 
 ## 🌐 Network Access
