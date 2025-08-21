@@ -54,10 +54,10 @@ def launch_container(mode):
         # Determine launch parameters based on selected mode
         mode_parameters = {
             "mode1": {"use_front_camera": "true", "use_front_lidar": "true"},
-            "mode2": {"use_rear_camera": "false", "use_rear_lidar": "true"},
-            "mode3": {"use_front_camera": "true", "use_rear_camera": "false"},
+            "mode2": {"use_rear_camera": "true", "use_rear_lidar": "true"},
+            "mode3": {"use_front_camera": "true", "use_rear_camera": "true"},
             "mode4": {"use_front_lidar": "true", "use_rear_lidar": "true"}, 
-            "mode5": {"use_front_lidar": "true", "use_rear_lidar": "true" , "use_front_camera": "true", "use_rear_camera": "false"},  
+            "mode5": {"use_front_lidar": "true", "use_rear_lidar": "true" , "use_front_camera": "true", "use_rear_camera": "true"},  
         }
         
         mode_topics = {
@@ -115,7 +115,7 @@ def launch_container(mode):
         current_mode = mode
         
         # Wait for ROS nodes to initialize
-        time.sleep(15)  # Simple delay - in production, you'd check node status
+        time.sleep(20)  # Simple delay - in production, you'd check node status
         
         container.reload()
         if container.status != "running":
