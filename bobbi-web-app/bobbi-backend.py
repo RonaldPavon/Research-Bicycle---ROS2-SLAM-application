@@ -73,7 +73,7 @@ def launch_container(mode):
         
         
         # Get parameters for the current mode
-        params = mode_parameters.get(mode, {"use_rear_camera": "false", "use_rear_lidar": "false" , "use_front_camera": "false", "use_rear_camera": "false"})
+        params = mode_parameters.get(mode, {"use_rear_camera": "false", "use_rear_lidar": "false" , "use_front_camera": "false", "use_front_lidar": "false"})
 
         param_args = " ".join([f"{key}:={value}" for key, value in params.items()])
         
