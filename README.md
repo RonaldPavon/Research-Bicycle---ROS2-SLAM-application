@@ -49,7 +49,10 @@ The HMI supports multiple modes of operation:
 
 1. **Power On**  
    - Turn on the Jetson system.  
-   - Enable the required sensors (front, rear, or both LiDARs) using the physical switches.  
+   - Enable the required sensors (front, rear, or both LiDARs) using the physical switches.
+  
+<img src="assets/buttons.jpg" alt="BobbiV2 Research Bicycle" title="BobbiV2 Research Bicycle" width="300">
+<p><em>Figure 3: Power and Sensor Control Buttons</em></p>   
 
 2. **Connect to WiFi**  
    - Connect to the network `bobbi-desktop`.  
