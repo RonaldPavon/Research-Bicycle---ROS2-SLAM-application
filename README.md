@@ -15,7 +15,7 @@ All recorded data is stored in ROS2 bag in `.db3` format and can be downloaded d
   - [**Web Application (HMI):**](bobbi-web-app/)  Provides a browser-based interface to select operation mode, start/stop recording, and download data.
   - [**ROS2 Drivers Container:**](docker/) Holds all ROS2 drivers and a launch manager to start the sensor stack based on the selected mode.
 
-  - **Sensor Hardware Stack**:
+- **Sensor Hardware Stack**:
   - [Livox Horizon LiDAR](https://www.livoxtech.com/3296f540ecf5458a8829e01cf429798e/assets/horizon/Livox%20Horizon%20user%20manual%20v1.0.pdf) – High-resolution LiDAR for front/rear perception.
   - [ZED X Camera](https://www.stereolabs.com/zed-x/) – Wide FOV stereo camera for visual data.
   - [u-blox GNSS](https://www.u-blox.com/en/product/zed-f9p-module) – High-precision GPS module for localization.
