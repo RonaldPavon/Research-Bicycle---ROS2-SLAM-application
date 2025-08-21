@@ -54,23 +54,26 @@ def launch_container(mode):
         # Determine launch parameters based on selected mode
         mode_parameters = {
             "mode1": {"use_front_camera": "true", "use_front_lidar": "true"},
-            "mode2": {"use_rear_camera": "false", "use_rear_lidar": "true"},
-            "mode3": {"use_front_camera": "true", "use_rear_camera": "false"},
+            "mode2": {"use_rear_camera": "true", "use_rear_lidar": "true"},
+            "mode3": {"use_front_camera": "true", "use_rear_camera": "true"},
             "mode4": {"use_front_lidar": "true", "use_rear_lidar": "true"}, 
-            "mode5": {"use_front_lidar": "true", "use_rear_lidar": "true" , "use_front_camera": "true", "use_rear_camera": "false"},  
+            "mode5": {"use_front_lidar": "true", "use_rear_lidar": "true" , "use_front_camera": "true", "use_rear_camera": "true"},  
         }
         
         mode_topics = {
-            "mode1": ["fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
-            "mode2": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
-            "mode3": ["/zed_multi/front_camera/imu"],    #Add rear camera 
-            "mode4": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"], #Add front lidar
-            "mode5": [],  
+            "mode1": ["/fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
+            "mode2": ["/fix","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom","/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
+            "mode3": ["/fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom"],    #Add rear camera 
+            "mode4": ["/fix","/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"], #Add front lidar
+            "mode5": [
+                "/fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom",
+                "/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"
+            ],  
         }
         
         
         # Get parameters for the current mode
-        params = mode_parameters.get(mode, {"use_rear_camera": "false", "use_rear_lidar": "false" , "use_front_camera": "false", "use_rear_camera": "false"})
+        params = mode_parameters.get(mode, {"use_rear_camera": "false", "use_rear_lidar": "false" , "use_front_camera": "false", "use_front_lidar": "false"})
 
         param_args = " ".join([f"{key}:={value}" for key, value in params.items()])
         
@@ -112,7 +115,7 @@ def launch_container(mode):
         current_mode = mode
         
         # Wait for ROS nodes to initialize
-        time.sleep(15)  # Simple delay - in production, you'd check node status
+        time.sleep(20)  # Simple delay - in production, you'd check node status
         
         container.reload()
         if container.status != "running":
@@ -174,14 +177,19 @@ def start_recording():
 
         dt = datetime.fromtimestamp(timestamp)
 
-        file_date = dt.strftime("%d_%m_%Y_%H_%M")
+        file_date = file_date = dt.strftime("%d_%m_%Y_%H_%M")
         
         mode_topics = {
-            "mode1": ["fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
-            "mode2": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
-            "mode3": ["/zed_multi/front_camera/imu", "/zed_multi/front_camera/rgb/image_rect_color/compressed"],
+            "mode1": ["/fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
+            "mode2": ["/fix","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom","/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
+            "mode3": ["/fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom"],    #Add rear camera 
+            "mode4": ["/fix","/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"], #Add front lidar
+            "mode5": [
+                "/fix","zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom",
+                "/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"
+            ],  
         }
-        
+
         topics = mode_topics.get(current_mode, [])
         if not topics:
             print(f"No topics for mode {current_mode}")
