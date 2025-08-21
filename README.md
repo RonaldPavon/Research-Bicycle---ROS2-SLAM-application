@@ -41,7 +41,7 @@ The HMI supports multiple modes of operation:
 - **Max. Perception** – All available sensors enabled simultaneously.  
 
 <img src="assets/bobbiapp.jpg" alt="BobbiV2 Research Bicycle" title="BobbiV2 Research Bicycle" width="300">
-<p><em>Figure 2: Mobile app for selecting operating mode</em></p>
+<p><em>Figure 2: BobbiV2 Control Interface</em></p>
 
 ---
 
@@ -76,6 +76,8 @@ The HMI supports multiple modes of operation:
      `http://10.42.0.1:5000/files`  
    - Download the generated `.db3` files with their respective metadata.  
 
+<img src="assets/bobbi.jpg" alt="BobbiV2 Research Bicycle" title="BobbiV2 Research Bicycle" width="300">
+<p><em>Figure 4: BobbiV2 File Manager</em></p>
 ---
 ## 🔧 Managing the System
 
