@@ -79,7 +79,7 @@ The HMI supports multiple modes of operation:
 ---
 ## 🔧 Managing the System
 
-The Bobbi Research Bicycle system comes **pre-installed** and the web application runs automatically on boot.  
+The BobbiV2 Research Bicycle system comes **pre-installed** and the web application runs automatically on boot.  
 If you need to rebuild or update the Docker containers, follow these steps:
 
 1. **Rebuild Docker Images**  
