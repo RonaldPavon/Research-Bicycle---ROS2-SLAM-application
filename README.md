@@ -76,9 +76,11 @@ The HMI supports multiple modes of operation:
      `http://10.42.0.1:5000/files`  
    - Download the generated `.db3` files with their respective metadata.  
 
-<img src="assets/filemanager.png" alt="BobbiV2 Research Bicycle" title="BobbiV2 Research Bicycle" width="300">
+<img src="assets/filemanager.png" alt="BobbiV2 Research Bicycle" title="BobbiV2 Research Bicycle" width="800">
 <p><em>Figure 4: BobbiV2 File Manager</em></p>
+
 ---
+
 ## 🔧 Managing the System
 
 The BobbiV2 Research Bicycle system comes **pre-installed** and the web application runs automatically on boot.  
