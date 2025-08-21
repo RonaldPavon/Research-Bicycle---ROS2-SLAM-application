@@ -118,7 +118,7 @@ If you need to rebuild or update the Docker containers, follow these steps:
   - You can access the Jetson directly using SSH for advanced debugging:
 
     ```bash
-    ssh bobbi@bobbi-desktop
+    ssh bobbi@10.42.0.1
     ```
    - Use the provided password.
   - Once connected, you can inspect logs, manage Docker containers, or check hardware interfaces.
