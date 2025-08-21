@@ -62,10 +62,13 @@ def launch_container(mode):
         
         mode_topics = {
             "mode1": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
-            "mode2": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
-            "mode3": ["/zed_multi/front_camera/imu"],    #Add rear camera 
-            "mode4": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"], #Add front lidar
-            "mode5": [],  
+            "mode2": ["zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom","/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
+            "mode3": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom"],    #Add rear camera 
+            "mode4": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"], #Add front lidar
+            "mode5": [
+                "zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom",
+                "/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"
+            ],  
         }
         
         
@@ -178,10 +181,15 @@ def start_recording():
         
         mode_topics = {
             "mode1": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"],
-            "mode2": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
-            "mode3": ["/zed_multi/front_camera/imu", "/zed_multi/front_camera/rgb/image_rect_color/compressed"],
+            "mode2": ["zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom","/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681"],
+            "mode3": ["zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom"],    #Add rear camera 
+            "mode4": ["/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"], #Add front lidar
+            "mode5": [
+                "zed_multi/front_camera/imu","/zed_multi/front_camera/left/camera_info","/zed_multi/front_camera/left/image_rect_color/compressed","/zed_multi/front_camera/odom","zed_multi/rear_camera/imu","/zed_multi/rear_camera/left/camera_info","/zed_multi/rear_camera/left/image_rect_color/compressed","/zed_multi/rear_camera/odom",
+                "/livox/imu_3WEDH7600115681", "/livox/lidar_3WEDH7600115681","/livox/imu_3WEDJ9H00100551" ,"/livox/lidar_3WEDJ9H00100551"
+            ],  
         }
-        
+
         topics = mode_topics.get(current_mode, [])
         if not topics:
             print(f"No topics for mode {current_mode}")

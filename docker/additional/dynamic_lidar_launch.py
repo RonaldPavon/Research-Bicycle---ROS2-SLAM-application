@@ -29,7 +29,7 @@ def generate_launch_description():
     
     xfer_format_arg = DeclareLaunchArgument(
         'xfer_format',
-        default_value='1',
+        default_value='0',
         description='0-Pointcloud2(PointXYZRTL), 1-customized pointcloud format'
     )
     
